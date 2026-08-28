@@ -204,16 +204,18 @@ describe('View user', () => {
 });
 
 describe('Create user', () => {
+  /** The page and the dialog both have Gender/Status controls, so scope to the dialog. */
   async function fillValidForm(user) {
-    await user.type(screen.getByLabelText(/first name/i), 'Grace');
-    await user.type(screen.getByLabelText(/last name/i), 'Mwangi');
-    await user.type(screen.getByLabelText(/email address/i), 'grace.mwangi@example.com');
-    await user.selectOptions(screen.getByLabelText(/gender/i), 'Female');
-    await user.type(screen.getByLabelText('Password*'), 'Password123');
-    await user.type(screen.getByLabelText(/confirm password/i), 'Password123');
-    await user.type(screen.getByLabelText(/phone number/i), '+254 722 118 440');
-    await user.type(screen.getByLabelText(/^city/i), 'Nairobi');
-    await user.type(screen.getByLabelText(/^country/i), 'Kenya');
+    const form = within(screen.getByRole('dialog'));
+    await user.type(form.getByLabelText(/first name/i), 'Grace');
+    await user.type(form.getByLabelText(/last name/i), 'Mwangi');
+    await user.type(form.getByLabelText(/email address/i), 'grace.mwangi@example.com');
+    await user.selectOptions(form.getByLabelText(/gender/i), 'Female');
+    await user.type(form.getByLabelText('Password*'), 'Password123');
+    await user.type(form.getByLabelText(/confirm password/i), 'Password123');
+    await user.type(form.getByLabelText(/phone number/i), '+254 722 118 440');
+    await user.type(form.getByLabelText(/^city/i), 'Nairobi');
+    await user.type(form.getByLabelText(/^country/i), 'Kenya');
   }
 
   test('blocks submission and reports required fields when the form is empty', async () => {

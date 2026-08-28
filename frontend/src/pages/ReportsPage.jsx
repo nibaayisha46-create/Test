@@ -69,6 +69,12 @@ export function ReportsPage() {
 
   const loadReport = useCallback(
     async (signal) => {
+      // A reversed range would only come back as a 422; the field shows why.
+      if (filters.dateFrom && filters.dateTo && filters.dateTo < filters.dateFrom) {
+        setLoading(false);
+        return;
+      }
+
       setLoading(true);
       setLoadError('');
       try {

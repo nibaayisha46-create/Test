@@ -18,5 +18,8 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./vitest.setup.js'],
     include: ['tests/**/*.test.jsx'],
+    // Worker threads start reliably on Windows; the default forks pool can stall.
+    pool: 'threads',
+    testTimeout: 15000,
   },
 });

@@ -83,11 +83,6 @@ describe('Summary cards', () => {
     render(<ReportsPage />);
     await screen.findByText('Aisha Rahman');
 
-    reportsApi.fetchUserReport.mockResolvedValue(
-      reportResponse([reportRow], {
-        summary: undefined,
-      }),
-    );
     reportsApi.fetchUserReport.mockResolvedValue({
       ...reportResponse(),
       summary: { ...summary, totalUsers: 5, activeUsers: 5, inactiveUsers: 0, maleUsers: 0, femaleUsers: 5 },
@@ -183,6 +178,21 @@ describe('Report filters', () => {
 
     await waitFor(() => expect(lastQuery().status).toBe(''));
     expect(screen.getByLabelText('Status')).toHaveValue('');
+  });
+
+  test('flags a reversed date range instead of querying the API', async () => {
+    const user = userEvent.setup();
+    render(<ReportsPage />);
+    await screen.findByText('Aisha Rahman');
+
+    await user.type(screen.getByLabelText(/created from/i), '2025-06-01');
+    await waitFor(() => expect(lastQuery().dateFrom).toBe('2025-06-01'));
+
+    const callsBefore = reportsApi.fetchUserReport.mock.calls.length;
+    await user.type(screen.getByLabelText(/created to/i), '2025-01-01');
+
+    expect(await screen.findByText(/must be on or after the start date/i)).toBeInTheDocument();
+    expect(reportsApi.fetchUserReport.mock.calls.length).toBe(callsBefore);
   });
 
   test('paginates the report rows', async () => {
